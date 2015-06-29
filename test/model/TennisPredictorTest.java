@@ -55,17 +55,17 @@ public class TennisPredictorTest {
     
     @Test
     public void correctProbabilityForWinningTieBreakSetFromScore(){
-        assertEquals("Probability when pA and pB are 0.5: ",0.5, tieBreakCalc5.pSet(0,0,0.5, 0.5), EPSILON); 
-        assertEquals("Probability from 4-5 when pA is 0.68 and pB is 0.62: ",0.135, tieBreakCalc5.pSet(4,5,0.67, 0.62), EPSILON); 
-        assertEquals("Probability from 2-4 when pA is 0.62 and pB is 0.67: ",0.072, tieBreakCalc5.pSet(2,4,0.62, 0.67), EPSILON);
+        assertEquals("Probability when pA and pB are 0.5: ",0.5, tieBreakCalc5.pSet(0,0,0.5, 0.5, 0), EPSILON); 
+        assertEquals("Probability from 4-5 when pA is 0.68 and pB is 0.62: ",0.135, tieBreakCalc5.pSet(4,5,0.67, 0.62, 0), EPSILON); 
+        assertEquals("Probability from 2-4 when pA is 0.62 and pB is 0.67: ",0.072, tieBreakCalc5.pSet(2,4,0.62, 0.67, 0), EPSILON);
         
     }
     
     @Test
     public void correctProbabilityForWinningAdvantageSetFromScore(){
-        assertEquals(0.57, advantageCalc3.pSet(0, 0, 0.6, 0.58), EPSILON);
-        assertEquals(0.56, advantageCalc3.pSet(3, 3, 0.6, 0.58), EPSILON);
-        assertEquals(0.92, advantageCalc3.pSet(5, 3, 0.6, 0.58), EPSILON);
+        assertEquals(0.57, advantageCalc3.pSet(0, 0, 0.6, 0.58, 0), EPSILON);
+        assertEquals(0.56, advantageCalc3.pSet(3, 3, 0.6, 0.58, 0), EPSILON);
+        assertEquals(0.92, advantageCalc3.pSet(5, 3, 0.6, 0.58, 0), EPSILON);
     }
     
     @Test
