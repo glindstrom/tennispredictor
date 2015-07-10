@@ -150,6 +150,15 @@ public class TennisProb {
 
     }
 
+    /**
+     * Returns the probability of Player A winning the match.
+     * @param gamesWonA the number of games Player A has won in the current set
+     * @param gamesWonB the number of games Player B has won in the current set
+     * @param pWinPointA the probability of Player A winning a point on serve
+     * @param pWinPointB the probability of Player B winning a point on serve
+     * @param setsPlayed the number of completed sets in the match
+     * @return the probability of Player A winning the match
+     */
     public double pSet(int gamesWonA, int gamesWonB, double pWinPointA, double pWinPointB, int setsPlayed) {
         if (gamesWonA >= 6 && (gamesWonA - gamesWonB) >= 2) {
             return 1;
@@ -157,7 +166,7 @@ public class TennisProb {
         if (gamesWonB >= 6 && (gamesWonB - gamesWonA) >= 2) {
             return 0;
         }
-        if (tieBreak || (wimbledon && isLastSet(setsPlayed))) {
+        if (tieBreak || (wimbledon && !isLastSet(setsPlayed))) {
 
             if (gamesWonA == 6 && gamesWonB == 6) {
                 return pTieBraker(0,0,pWinPointA, pWinPointB);
@@ -176,6 +185,14 @@ public class TennisProb {
         }
     }
     
+    /**
+     * Returns the probability of Player A winning the match.
+     * @param setsWonA the number of sets won by Player A so far
+     * @param setsWonB the number of sets won by Player B so far
+     * @param pWinPointA the probability of Player A winning point on serve
+     * @param pWinPointB the probability of Player B winning point on serve
+     * @return the probability of Player A winning the match.
+     */
     public double pMatch(int setsWonA, int setsWonB, double pWinPointA, double pWinPointB){
         int setsPlayed = setsWonA+setsWonB;
         if (fiveSetter){

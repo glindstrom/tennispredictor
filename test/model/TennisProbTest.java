@@ -13,7 +13,7 @@ import org.junit.Before;
  *
  * @author gabriel
  */
-public class TennisPredictorTest {
+public class TennisProbTest {
     
     public static final double EPSILON = 0.01;
     public TennisProb tieBreakCalc3;
