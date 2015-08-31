@@ -7,6 +7,8 @@ package model;
  */
 public class ServeWinProb {
     
+    private final static double BASELINE_SERVICE_WON_PERCENTAGE = 0.6;
+    
     /**
      * Returns the advantage (disadvantage) Player A has over Player B in t
      * terms of the percentage of service points won against opponent C  
@@ -34,5 +36,6 @@ public class ServeWinProb {
     public static double returnWinninPercentage(double firstServeInAv, double firstReturnWin, double secondReturnWin){
         return firstServeInAv*firstReturnWin + (1-firstServeInAv)*secondReturnWin; 
     }
+    
 
 }
