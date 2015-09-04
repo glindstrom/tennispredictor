@@ -39,21 +39,21 @@ public class TennisScracper {
         element = findElementByXPath(
                 "//*[@id='header-benchmarking-login-container']/div[2]/form/div[3]/button");
         element.click();
-        driver.get(TennisInsight.MATCH_PREVIEW_URL);       
-        List<String> links = new ArrayList();List<WebElement> elements = findElementsByXPath("//section/div[@class='container']/div[div/a[contains(text(), '" + tournamentName + "')]]//td[@class='match-row-link']/a");
+        driver.get(TennisInsight.MATCH_PREVIEW_URL);
+        List<String> links = new ArrayList();
+        List<WebElement> elements = findElementsByXPath("//section/div[@class='container']/div[div/a[contains(text(), '" + tournamentName + "')]]//td[@class='match-row-link']/a");
         elements.forEach(e -> links.add(e.getAttribute("href")));
         int i = 1;
-        for (String link : links) {         
+        for (String link : links) {
             Match match = new Match();
             driver.get(link);
-            
+
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("matchStatsDraw")));
             Select select = new Select(findElementById("matchStatsDraw"));
             select.selectByValue("md");
             findElementById("matchStatsCompareSubmit").click();
-            
+
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr[27]/td/b")));
-            //wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='col-md-4 match-stats-filter']")));
             extractPlayerNames(match);
             extractPlayerStats(match, false);
             select.selectByValue("all");
@@ -65,19 +65,17 @@ public class TennisScracper {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr[27]/td/b")));
             extractPlayerStats(match, true);
             matches.add(match);
-            i++;        
+            i++;
         }
         return matches;
     }
 
     public static void main(String[] args) {
         String input = "65% (14-8)";
-        String matchesPlayed = input.substring(input.indexOf('(')+1, input.indexOf(')'));
+        String matchesPlayed = input.substring(input.indexOf('(') + 1, input.indexOf(')'));
         String[] nMatches = matchesPlayed.split("-");
         int numberOfMatchesPlayed = Integer.parseInt(nMatches[0]) + Integer.parseInt(nMatches[1]);
         System.out.println(numberOfMatchesPlayed);
-//        TennisScracper scraper = new TennisScracper();
-//        scraper.fetchMatches("US Open ATP");
     }
 
     private WebElement findElementById(String id) {
@@ -92,46 +90,47 @@ public class TennisScracper {
         return driver.findElements(By.xpath(path));
     }
 
-    private void extractPlayerNames(Match match) {        
+    private void extractPlayerNames(Match match) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr/th[1]/b")));
-        String name = extractName("//tr/th[1]/b");
+        String name = extractTextByXPath("//tr/th[1]/b");
+        System.out.println(name);
         match.setPlayerAname(name);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr/th[3]/b")));
-        name = extractName("//tr/th[3]/b");
+        name = extractTextByXPath("//tr/th[3]/b");
+        System.out.println(name);
         match.setPlayerBname(name);
-      
+
     }
-   
-    private String extractName(String path){
-        try{
+
+    private String extractTextByXPath(String path) {
+        try {
             return findElementByXPath(path).getText();
-            
-        } catch (StaleElementReferenceException e){
-            return extractName(path);
+
+        } catch (StaleElementReferenceException e) {
+            return extractTextByXPath(path);
         }
     }
 
-    private void extractPlayerStats(Match match, boolean commonOpponent) {   
+    private void extractPlayerStats(Match match, boolean commonOpponent) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr[27]/td/b")));
-        List<WebElement> elements;
-        String stat = findElementByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[15]/td[1]/b").getText();
+        String stat = extractTextByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[15]/td[1]/b");
         double servicePointWonA = parseDoubleFromPercentage(stat);
-        stat = findElementByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[27]/td[1]/b").getText();
+        stat = extractTextByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[27]/td[1]/b");
         double returnWonA = parseDoubleFromPercentage(stat);
-        stat = findElementByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[15]/td[3]/b").getText();
+        stat = extractTextByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[15]/td[3]/b");
         double servicePointWonB = parseDoubleFromPercentage(stat);
-        stat = findElementByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[27]/td[3]/b").getText();
+        stat = extractTextByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr[27]/td[3]/b");
         double returnWonB = parseDoubleFromPercentage(stat);
-        elements = findElementsByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr/td");
-        if (commonOpponent) {
+        List<WebElement> elements = findElementsByXPath("//table[@class='table table-condensed match-stats-table']/tbody/tr/td");
+        if (!commonOpponent) {
             match.setPlayerAstat(Statistics.SERVICE_POINT_WON, servicePointWonA);
             match.setPlayerAstat(Statistics.RETURN_POINT_WON, returnWonA);
             match.setPlayerBstat(Statistics.RETURN_POINT_WON, returnWonB);
-            match.setPlayerBstat(Statistics.SERVICE_POINT_WON, servicePointWonB);            
+            match.setPlayerBstat(Statistics.SERVICE_POINT_WON, servicePointWonB);
             match.setCommonOpponentMatchesPlayedA(extractNumberOfMatchesPlayed(elements.get(0).getText()));
-            match.setCommonOpponentMatchesPlayedB(extractNumberOfMatchesPlayed(elements.get(2).getText()));
-        }
-        else{
+            match.setCommonOpponentMatchesPlayedB(extractNumberOfMatchesPlayed(elements.get(2).getText()));           
+        } else {
+
             match.setPlayerAstat(Statistics.SERVICE_POINT_WON_VS_COMMON_OPPONENT, servicePointWonA);
             match.setPlayerAstat(Statistics.RETURN_POINT_WON_VS_COMMON_OPPONENT, returnWonA);
             match.setPlayerBstat(Statistics.RETURN_POINT_WON_VS_COMMON_OPPONENT, returnWonB);
@@ -148,9 +147,9 @@ public class TennisScracper {
     }
 
     private int extractNumberOfMatchesPlayed(String text) {
-        String matchesPlayed = text.substring(text.indexOf('(')+1, text.indexOf(')'));
+        String matchesPlayed = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
         String[] nMatches = matchesPlayed.split("-");
-        return Integer.parseInt(nMatches[0]) + Integer.parseInt(nMatches[1]);        
+        return Integer.parseInt(nMatches[0]) + Integer.parseInt(nMatches[1]);
     }
 
 }
