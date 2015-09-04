@@ -64,18 +64,12 @@ public class TennisScracper {
             findElementById("matchStatsCompareSubmit").click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tr[27]/td/b")));
             extractPlayerStats(match, true);
-            matches.add(match);
+            if (!matches.contains(match)) {
+                matches.add(match);
+            }
             i++;
         }
         return matches;
-    }
-
-    public static void main(String[] args) {
-        String input = "65% (14-8)";
-        String matchesPlayed = input.substring(input.indexOf('(') + 1, input.indexOf(')'));
-        String[] nMatches = matchesPlayed.split("-");
-        int numberOfMatchesPlayed = Integer.parseInt(nMatches[0]) + Integer.parseInt(nMatches[1]);
-        System.out.println(numberOfMatchesPlayed);
     }
 
     private WebElement findElementById(String id) {
@@ -128,7 +122,7 @@ public class TennisScracper {
             match.setPlayerBstat(Statistics.RETURN_POINT_WON, returnWonB);
             match.setPlayerBstat(Statistics.SERVICE_POINT_WON, servicePointWonB);
             match.setCommonOpponentMatchesPlayedA(extractNumberOfMatchesPlayed(elements.get(0).getText()));
-            match.setCommonOpponentMatchesPlayedB(extractNumberOfMatchesPlayed(elements.get(2).getText()));           
+            match.setCommonOpponentMatchesPlayedB(extractNumberOfMatchesPlayed(elements.get(2).getText()));
         } else {
 
             match.setPlayerAstat(Statistics.SERVICE_POINT_WON_VS_COMMON_OPPONENT, servicePointWonA);

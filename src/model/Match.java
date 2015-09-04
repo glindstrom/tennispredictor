@@ -3,6 +3,7 @@ package model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -115,6 +116,25 @@ public class Match {
         return playerAname + ";" + playerBname + ";" + oddsA.get(Odds.COMMON_OPPONENTS) + ";" + 
                 oddsB.get(Odds.COMMON_OPPONENTS) + ";" + oddsA.get(Odds.HISTORICAL) + ";" + oddsB.get(Odds.HISTORICAL);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Match)) return false;
+        Match otherMatch = (Match) other;
+        return (this.playerBname.equals(otherMatch.getPlayerAname()) && this.playerBname.equals(otherMatch.getPlayerBname()));        
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.playerAname);
+        hash = 47 * hash + Objects.hashCode(this.playerBname);
+        return hash;
+    }
+    
+    
     
     
 
